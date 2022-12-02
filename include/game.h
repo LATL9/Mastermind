@@ -13,10 +13,12 @@ class Game
         Game();
         void Update();
         void Draw();
+        void updateFeedback();
 
     private:
-        Pattern guessPattern;
         std::vector<Pattern> Board;
+        Pattern guessPattern;
+        int currentPattern;
 };
 
 #endif
