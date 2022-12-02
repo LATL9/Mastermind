@@ -1,11 +1,24 @@
 
 APPNAME:=$(shell basename `pwd`)
 
-LDFLAGS:=-L ../raylib/src -lm -lraylib -lX11 -ldl -pthread
+ifeq ($(OS),LIN)
+    LDFLAGS:=-L ../raylib/src
+else
+    LDFLAGS:=-L H:\raylib\include
+endif
+LDFLAGS+=-lm -lraylib -pthread
+ifeq ($(OS),LIN)
+    LDFLAGS+= -lX11 -ldl
+else
+    LDFLAGS+= -lopengl32 -lgdi32 -lwinmm -mwindows
+endif
 
-CFLAGS:= -g -Wfatal-errors -pedantic -Wall -Wextra -Werror
-CFLAGS+= -std=c++11 -I ./include -I ../raylib/src
-
+CFLAGS:= -g -Wfatal-errors -pedantic -Wall -Wextra -Werror -std=c++11 -I ./include
+ifeq ($(OS),LIN)
+    CFLAGS+= -I ../raylib/src
+else
+    CFLAGS+= -I H:\raylib
+endif
 SRC:=$(wildcard src/*.cpp)
 OBJ:=$(SRC:src/%.cpp=obj/%.o)
 INC:=$(wildcard include/*.h)
