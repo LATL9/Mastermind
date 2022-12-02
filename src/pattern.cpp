@@ -1,4 +1,5 @@
 #include "raylib.h"
+
 #include <stdlib.h>
 #include <iostream>
 
@@ -9,7 +10,14 @@
 Pattern::Pattern()
 {
     pegs = std::vector<int>(PATTERN_SIZE);
+    feedbackPegs = std::vector<int>(PATTERN_SIZE);
 };
+void Pattern::Reset()
+{
+    pegs = std::vector<int>(PATTERN_SIZE);
+    feedbackPegs = std::vector<int>(PATTERN_SIZE);
+    filledPegs = 0;
+}
 
 int Pattern::get_peg(int index)
 {
@@ -25,7 +33,16 @@ bool Pattern::add_peg(int type)
         return true;
     } else { return false; }
 };
-
+bool Pattern::set_feedbackPeg(int index, int type)
+{
+    if (index >= 0 && index <= PATTERN_SIZE && type >= 0 && type <= 3)
+    {
+        feedbackPegs[index] = type;
+        return true;
+    }
+    else { return false; }
+};
+int Pattern::get_filledPegs() { return filledPegs; }
 bool Pattern::isEqual(Pattern p)
 {
     for (int i = 0; i < PATTERN_SIZE; ++i)
@@ -38,6 +55,7 @@ bool Pattern::isEqual(Pattern p)
 bool Pattern::Draw(int x, int y, int w, int h, int fillW, int fillH)
 {
     Color pegColour;
+    Color feedbackColour;
 
     for (int i = 0; i < PATTERN_SIZE; ++i)
     {
@@ -67,8 +85,33 @@ bool Pattern::Draw(int x, int y, int w, int h, int fillW, int fillH)
                 pegColour = BLUE;
                 break;
         }
+        switch (feedbackPegs[i])
+        {
+            case 0:
+                feedbackColour = GRAY;
+                break;
+
+            case 1:
+                feedbackColour = GREEN;
+                break;
+
+            case 2:
+                feedbackColour = ORANGE;
+                break;
+
+            case 3:
+                feedbackColour = RED;
+                break;
+        }
         DrawRectangle(
-            x + (float)(w - fillW) / 2,
+            x + i * w,
+            y,
+            w,
+            h,
+            feedbackColour
+        );
+        DrawRectangle(
+            x + (float)(w - fillW) / 2 + i * w,
             y + (float)(h - fillH) / 2,
             fillW,
             fillH,
